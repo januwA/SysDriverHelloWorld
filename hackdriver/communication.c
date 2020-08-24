@@ -2,7 +2,7 @@
 #include "messages.h"
 #include "data.h"
 
-NTSTATUS CreateCall(PDEVICE_OBJECT DeviceObject, PIRP Irp)
+NTSTATUS CreateCall(_In_ struct _DEVICE_OBJECT* DeviceObject, _Inout_ struct _IRP* Irp)
 {
 	UNREFERENCED_PARAMETER(DeviceObject);
 	Irp->IoStatus.Status = STATUS_SUCCESS;
@@ -12,7 +12,7 @@ NTSTATUS CreateCall(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 	return STATUS_SUCCESS;
 }
 
-NTSTATUS CloseCall(PDEVICE_OBJECT DeviceObject, PIRP Irp)
+NTSTATUS CloseCall(_In_ struct _DEVICE_OBJECT* DeviceObject, _Inout_ struct _IRP* Irp)
 {
 	UNREFERENCED_PARAMETER(DeviceObject);
 	Irp->IoStatus.Status = STATUS_SUCCESS;
@@ -22,7 +22,7 @@ NTSTATUS CloseCall(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 	return STATUS_SUCCESS;
 }
 
-NTSTATUS IoControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
+NTSTATUS IoControl(_In_ struct _DEVICE_OBJECT* DeviceObject, _Inout_ struct _IRP* Irp)
 {
 	UNREFERENCED_PARAMETER(DeviceObject);
 
@@ -40,10 +40,6 @@ NTSTATUS IoControl(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 		mDebug("ClienAddress requested!\n");
 		status = STATUS_SUCCESS;
 		byteIO = sizeof(*outPut);
-	}
-	else
-	{
-		byteIO = 0;
 	}
 
 	Irp->IoStatus.Status = status;

@@ -6,17 +6,17 @@
 #include "communication.h"
 
 
-PLOAD_IMAGE_NOTIFY_ROUTINE ImageLoadCallback(
-	PUNICODE_STRING FullImageName,
-	HANDLE ProcessId,
-	PIMAGE_INFO ImageInfo
+void ImageLoadCallback(
+	_In_opt_ PUNICODE_STRING FullImageName, // dll 路径
+	_In_ HANDLE ProcessId,                // 加载dll的程序id
+	_In_ PIMAGE_INFO ImageInfo				// dll 模块信息
 )
 {
 	// 这将打印很多信息
 	// mDebug("ImageLoad: %ls \n", FullImageName->Buffer);
 
 	// 检查指定的DLL是否被加载
-	if (wcsstr(FullImageName->Buffer, L"\\EmptyDll\\Release\\EmptyDll.dll"))
+	if (wcsstr(FullImageName->Buffer, L"Release\\EmptyDll.dll"))
 	{
 		// DLL的虚拟基址
 		// https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_image_info
@@ -24,14 +24,15 @@ PLOAD_IMAGE_NOTIFY_ROUTINE ImageLoadCallback(
 		mDebug("Inject ProcessID: %d \n", ProcessId);
 		mDebug("Inject ClientDLLAddress: %x \n", CientDLLAddress);
 	}
-
-	return STATUS_SUCCESS;
 }
 
 
 // start
 // https://docs.microsoft.com/en-us/windows-hardware/drivers/wdf/driverentry-for-kmdf-drivers
-NTSTATUS DriverEntry(PDRIVER_OBJECT pDriverObject, PUNICODE_STRING pRrgister)
+NTSTATUS DriverEntry(
+	_In_ PDRIVER_OBJECT pDriverObject,
+	_In_ PUNICODE_STRING pRegisterPath
+)
 {
 	mDebug("driver start...\n");
 
@@ -76,7 +77,7 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT pDriverObject, PUNICODE_STRING pRrgister)
 }
 
 // stop
-NTSTATUS UnloadDriver(PDRIVER_OBJECT pDriverObject)
+NTSTATUS UnloadDriver(_In_ PDRIVER_OBJECT pDriverObject)
 {
 	mDebug("driver stop...\n");
 
