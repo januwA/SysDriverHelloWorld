@@ -2,8 +2,10 @@
 
 内核模式与用户模式通信
 
-- https://www.youtube.com/watch?v=9h1FsOISwX0&list=PLt9cUwGw6CYHWuMtGHSgdLUaTo7aa2lEr
-- https://zhuanlan.zhihu.com/p/34743309
+- [内核hack video](https://www.youtube.com/watch?v=9h1FsOISwX0&list=PLt9cUwGw6CYHWuMtGHSgdLUaTo7aa2lEr)
+- [如何进入测试模式](https://zhuanlan.zhihu.com/p/34743309)
+- [DebugView下载](https://docs.microsoft.com/en-us/sysinternals/downloads/debugview)
+- [下载WDK](https://docs.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk)
 
 
 ```
