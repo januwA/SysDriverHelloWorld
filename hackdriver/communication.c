@@ -1,6 +1,8 @@
+#pragma warning(disable: 4100 4047 4022)
+
 #include "communication.h"
-#include "messages.h"
 #include "data.h"
+#include "memory.h"
 
 NTSTATUS CreateCall(_In_ struct _DEVICE_OBJECT* DeviceObject, _Inout_ struct _IRP* Irp)
 {
@@ -8,7 +10,7 @@ NTSTATUS CreateCall(_In_ struct _DEVICE_OBJECT* DeviceObject, _Inout_ struct _IR
 	Irp->IoStatus.Status = STATUS_SUCCESS;
 	Irp->IoStatus.Information = 0;
 	IoCompleteRequest(Irp, IO_NO_INCREMENT);
-	mDebug("CreateCall\n");
+	DbgPrintEx(0, 0, "CreateCall\n");
 	return STATUS_SUCCESS;
 }
 
@@ -18,7 +20,7 @@ NTSTATUS CloseCall(_In_ struct _DEVICE_OBJECT* DeviceObject, _Inout_ struct _IRP
 	Irp->IoStatus.Status = STATUS_SUCCESS;
 	Irp->IoStatus.Information = 0;
 	IoCompleteRequest(Irp, IO_NO_INCREMENT);
-	mDebug("CloseCall\n");
+	DbgPrintEx(0, 0, "CloseCall\n");
 	return STATUS_SUCCESS;
 }
 
@@ -34,12 +36,34 @@ NTSTATUS IoControl(_In_ struct _DEVICE_OBJECT* DeviceObject, _Inout_ struct _IRP
 
 	if (controlCode == IO_GET_CLIENTADDRESS)
 	{
-		mDebug("---收到通信---\n");
 		PULONG outPut = (PULONG)Irp->AssociatedIrp.SystemBuffer;
 		*outPut = CientDLLAddress;
-		mDebug("ClienAddress requested!\n");
 		status = STATUS_SUCCESS;
 		byteIO = sizeof(*outPut);
+	}
+	else if (controlCode == IO_READ_REQUEST)
+	{
+		DbgPrintEx(0, 0, "收到read信号\n");
+		PKERNEL_READ_REQUEST readInput = (PKERNEL_READ_REQUEST)Irp->AssociatedIrp.SystemBuffer;
+		PEPROCESS gameProcess;
+		if (NT_SUCCESS(PsLookupProcessByProcessId(readInput->processId, &gameProcess)))
+		{
+			KernelReadVirtualMemory(gameProcess, readInput->address, readInput->pBuff, readInput->size);
+			status = STATUS_SUCCESS;
+			byteIO = sizeof(KERNEL_READ_REQUEST);
+		}
+	}
+	else if (controlCode == IO_WRITE_REQUEST)
+	{
+		DbgPrintEx(0, 0, "收到write信号\n");
+		PKERNEL_WRITE_REQUEST writeInput = (PKERNEL_WRITE_REQUEST)Irp->AssociatedIrp.SystemBuffer;
+		PEPROCESS gameProcess;
+		if (NT_SUCCESS(PsLookupProcessByProcessId(writeInput->processId, &gameProcess)))
+		{
+			KernelWriteVirtualMemory(gameProcess, writeInput->pBuff, writeInput->address, writeInput->size);
+			status = STATUS_SUCCESS;
+			byteIO = sizeof(KERNEL_WRITE_REQUEST);
+		}
 	}
 
 	Irp->IoStatus.Status = status;

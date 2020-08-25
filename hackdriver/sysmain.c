@@ -1,14 +1,13 @@
 #pragma warning (disable : 4100 4047 4024)
 
 #include "sysmain.h"
-#include "messages.h"
 #include "data.h"
 #include "communication.h"
 
 
 void ImageLoadCallback(
 	_In_opt_ PUNICODE_STRING FullImageName, // dll 路径
-	_In_ HANDLE ProcessId,                // 加载dll的程序id
+	_In_ HANDLE ProcessId,                // 加载dll的进程id
 	_In_ PIMAGE_INFO ImageInfo				// dll 模块信息
 )
 {
@@ -21,8 +20,8 @@ void ImageLoadCallback(
 		// DLL的虚拟基址
 		// https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_image_info
 		CientDLLAddress = ImageInfo->ImageBase;
-		mDebug("Inject ProcessID: %d \n", ProcessId);
-		mDebug("Inject ClientDLLAddress: %x \n", CientDLLAddress);
+		DbgPrintEx(0, 0, "Inject ProcessID: %d \n", ProcessId);
+		DbgPrintEx(0, 0, "Inject ClientDLLAddress: %x \n", CientDLLAddress);
 	}
 }
 
@@ -34,7 +33,7 @@ NTSTATUS DriverEntry(
 	_In_ PUNICODE_STRING pRegisterPath
 )
 {
-	mDebug("driver start...\n");
+	DbgPrintEx(0, 0, "driver start...\n");
 
 	// 每当有Image被加载，就会通知回调
 	PsSetLoadImageNotifyRoutine(ImageLoadCallback);
@@ -54,11 +53,11 @@ NTSTATUS DriverEntry(
 		&pDeviceObject
 	) == STATUS_SUCCESS)
 	{
-		mDebug("---IoCreateDevice ok---");
+		DbgPrintEx(0, 0, "---IoCreateDevice ok---");
 	}
 	else
 	{
-		mDebug("---IoCreateDevice error---");
+		DbgPrintEx(0, 0, "---IoCreateDevice error---");
 	}
 
 	// 设置了一个设备对象名称和该设备的用户可视名称之间的符号链接
@@ -79,7 +78,7 @@ NTSTATUS DriverEntry(
 // stop
 NTSTATUS UnloadDriver(_In_ PDRIVER_OBJECT pDriverObject)
 {
-	mDebug("driver stop...\n");
+	DbgPrintEx(0, 0, "driver stop...\n");
 
 	// 驱动程序必须在卸载前删除其注册的所有回调
 	PsRemoveLoadImageNotifyRoutine(ImageLoadCallback);

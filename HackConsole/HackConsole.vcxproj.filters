@@ -18,13 +18,5 @@
     <ClCompile Include="HackConsole.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="kernelinterface.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="kernelinterface.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,7 +1,8 @@
 #pragma once
 
 #include <ntifs.h>
+#include <ntddk.h>
 
-NTSTATUS DriverEntry(PDRIVER_OBJECT pDriverObject, PUNICODE_STRING pRrgister);
+NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT pDriverObject, _In_ PUNICODE_STRING pRrgister);
+NTSTATUS UnloadDriver(_In_ PDRIVER_OBJECT pDriverObject);
 
-NTSTATUS UnloadDriver(PDRIVER_OBJECT pDriverObject);
